@@ -1,22 +1,38 @@
-[gd_scene load_steps=4 format=3 uid="uid://b60shoqx01pxn"]
+[gd_scene load_steps=8 format=3 uid="uid://b60shoqx01pxn"]
 
 [ext_resource type="Script" path="res://WorldMap.gd" id="1_5no85"]
+[ext_resource type="Script" path="res://Neuron.gd" id="2_8dbcg"]
+[ext_resource type="Texture2D" uid="uid://bx0egabs12467" path="res://icon.svg" id="3_d1d74"]
+[ext_resource type="Script" path="res://Axon.gd" id="4_gh8jp"]
+[ext_resource type="Script" path="res://Axon/Animation.gd" id="5_uf5m5"]
 
-[sub_resource type="Curve2D" id="Curve2D_p561d"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jgpek"]
+size = Vector2(57.5, 58.5)
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_fgrlk"]
 
 [node name="WorldMap" type="Node2D"]
 script = ExtResource("1_5no85")
 
-[node name="CharacterCanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Path2D" type="Path2D" parent="."]
-visible = false
-curve = SubResource("Curve2D_p561d")
+[node name="NeuronPrototype" type="Area2D" parent="."]
+script = ExtResource("2_8dbcg")
 
-[node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
+[node name="Sprite2D" type="Sprite2D" parent="NeuronPrototype"]
+scale = Vector2(0.4375, 0.4375)
+texture = ExtResource("3_d1d74")
 
-[node name="Sprite2D" type="Sprite2D" parent="Path2D/PathFollow2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NeuronPrototype"]
+position = Vector2(0.25, -0.25)
+shape = SubResource("RectangleShape2D_jgpek")
+
+[node name="AxonPrototype" type="Path2D" parent="."]
+script = ExtResource("4_gh8jp")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="AxonPrototype"]
+script = ExtResource("5_uf5m5")
+
+[node name="Sprite2D" type="Sprite2D" parent="AxonPrototype/PathFollow2D"]
 scale = Vector2(0.0175781, 0.0195313)
 texture = SubResource("NoiseTexture2D_fgrlk")

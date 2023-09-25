@@ -1,44 +1,40 @@
 extends Node2D
 
-const Character = preload("res://Character.tscn")
+var _dragging_from : Neuron
 
-var begin_character : Character
-var draging_curve : Curve2D
+#
+#class Drag:
+#	var begin: WeakRef
+#	var end: WeakRef
+#	func begin()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
+	$NeuronPrototype.visible = false
+	$AxonPrototype.visible = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	var prev_prog = $Path2D/PathFollow2D.progress_ratio
-	prev_prog += delta * 2
-	prev_prog = 0 if prev_prog > 1 else prev_prog
-	$Path2D/PathFollow2D.progress_ratio = prev_prog
+func _process(_delta):
+	pass
 	
-func _character_mousedown(_viewport:Node, event:InputEvent, _shape_idx:int, character:Character):
+func _character_mousedown(_viewport:Node, event:InputEvent, _shape_idx:int, which:Neuron):
 	if event.is_action_pressed("drag"):
-		begin_character = character
-		draging_curve = Curve2D.new()
-		draging_curve.clear_points()
-		draging_curve.add_point(character.position)
+		_dragging_from = which
 		
-	elif event.is_action_released("drag") and begin_character != character:
-		draging_curve.add_point(character.position,
-								Vector2(begin_character.position.x - character.position.x, 0))
-		$Path2D.curve = draging_curve
-		$Path2D/PathFollow2D.progress_ratio = 0
-		$Path2D.visible = true
+	elif event.is_action_released("drag") and _dragging_from != which:
+		var axon = $AxonPrototype.duplicate() as Axon
+		axon.connect_neuron(_dragging_from, which)
+		$CanvasLayer.add_child(axon)
+		axon.visible = true
 
 func _unhandled_key_input(event):
 	if event.is_action_pressed("new"):
-		var c = Character.instantiate()
-		c.input_event.connect(_character_mousedown.bind(c))
-		c.translate(Vector2(randi_range(0, get_viewport_rect().size.x),
-							randi_range(0, get_viewport_rect().size.y)))
-		c.visible = true
-		$CharacterCanvasLayer.add_child(c)
-		print("new=", c)
+		var neuron = $NeuronPrototype.duplicate() as Neuron
+		neuron.input_event.connect(_character_mousedown.bind(neuron))
+		neuron.translate(get_viewport().get_mouse_position())
+		$CanvasLayer.add_child(neuron)
+		neuron.visible = true
+		
 	elif event.is_action_pressed("clean"):
-		for n in $CharacterCanvasLayer.get_children():
+		for n in $CanvasLayer.get_children():
 			n.queue_free()
