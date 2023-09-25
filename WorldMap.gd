@@ -2,12 +2,6 @@ extends Node2D
 
 var _dragging_from : Neuron
 
-#
-#class Drag:
-#	var begin: WeakRef
-#	var end: WeakRef
-#	func begin()
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass
