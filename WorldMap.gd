@@ -10,8 +10,7 @@ var _dragging_from : Neuron
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$NeuronPrototype.visible = false
-	$AxonPrototype.visible = false
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -25,7 +24,6 @@ func _character_mousedown(_viewport:Node, event:InputEvent, _shape_idx:int, whic
 		var axon = $AxonPrototype.duplicate() as Axon
 		axon.connect_neuron(_dragging_from, which)
 		$CanvasLayer.add_child(axon)
-		axon.visible = true
 
 func _unhandled_key_input(event):
 	if event.is_action_pressed("new"):
@@ -33,7 +31,6 @@ func _unhandled_key_input(event):
 		neuron.input_event.connect(_character_mousedown.bind(neuron))
 		neuron.translate(get_viewport().get_mouse_position())
 		$CanvasLayer.add_child(neuron)
-		neuron.visible = true
 		
 	elif event.is_action_pressed("clean"):
 		for n in $CanvasLayer.get_children():
